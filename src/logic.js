@@ -55,7 +55,12 @@ export async function generate(modelId, name) {
       { role: "user", content: `Name: ${name}` },
     ],
     stream: true,
-    completionOpts: { temperature: 0.8, maxTokens: 80 },
+    // Lower than the original 0.8: traditional nicknames legitimately don't
+    // always share letters with the name (e.g. "Sandy" for Alexander), so a
+    // strict letter-overlap grounding check would reject valid results —
+    // reducing randomness instead cuts down on fully unrelated fabrications
+    // (e.g. "Xavier" appearing as a nickname for "Alexander").
+    completionOpts: { temperature: 0.5, maxTokens: 80 },
   });
 
   let text = "";
